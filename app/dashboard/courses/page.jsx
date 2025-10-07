@@ -130,16 +130,20 @@ const CourseManagement = memo(function CourseManagement() {
   const { userProfile } = useSupabase();
   const [courseList, setCourseList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const hasFetchedRef = useRef(false);
 
   // Helper functions and callbacks
   const GetCourseList = useCallback(async (forceRefresh = false) => {
+    // Prevent duplicate calls
+    if (loading && !forceRefresh) return;
+
     setLoading(true);
     try {
       // Check cache first
       const cacheKey = `courses_${userProfile?.email}`;
       const cachedCourses = sessionStorage.getItem(cacheKey);
       const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
-      const cacheExpiry = 2 * 60 * 1000; // 2 minutes for courses (shorter since they update more frequently)
+      const cacheExpiry = 5 * 60 * 1000; // 5 minutes cache (increased from 2)
 
       if (!forceRefresh && cachedCourses && cacheTimestamp) {
         const isExpired = Date.now() - parseInt(cacheTimestamp) > cacheExpiry;
@@ -168,14 +172,16 @@ const CourseManagement = memo(function CourseManagement() {
     } finally {
       setLoading(false);
     }
-  }, [userProfile?.email]);
+  }, [userProfile?.email, loading]);
 
-  // useEffect hooks
+  // useEffect hooks - Only run once when component mounts
   useEffect(() => {
-    if (userProfile?.email) {
+    if (userProfile?.email && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
       GetCourseList();
     }
-  }, [userProfile, GetCourseList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userProfile?.email]); // Removed GetCourseList from dependencies
 
   return (
     <div className="space-y-8">
