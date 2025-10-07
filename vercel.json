@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "app/api/inngest/route.js": {
+      "maxDuration": 300
+    },
+    "app/api/generate-course-outline/route.js": {
+      "maxDuration": 60
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "studyMaterial" ADD COLUMN "created_for" varchar(255) NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE "flashcards" ADD COLUMN "status" varchar DEFAULT 'Generating';
